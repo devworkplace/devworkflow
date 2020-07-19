@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Stacked Bar Chart</title>
+		<script src="Chart.bundle.js"></script>
+		<style>
+		canvas {
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
+		</style>
+	</head>
+	<body>
+		<div style="width: 75%">
+			<canvas id="canvas"></canvas>
+		</div>
+		<button id="randomizeData">Randomize Data</button>
+		<script>
+			function gerarValorAleatorio() {
+				return (Math.random() * (10 - 1) + 1).toFixed(0);
+			}
+			
+			function gerarCorAleatoria() {//Ver se já foi escolhida
+				var limiteSuperior = 256;
+				var limiteInferior = 0;
+				var valorRed = (Math.random() * (limiteSuperior - limiteInferior) + limiteInferior).toFixed(0);
+				var valorGreen = (Math.random() * (limiteSuperior - limiteInferior) + limiteInferior).toFixed(0);
+				var valorBlue = (Math.random() * (limiteSuperior - limiteInferior) + limiteInferior).toFixed(0);
+				return 'rgb(' + valorRed + ', ' + valorGreen + ', ' + valorBlue + ')';
+			}
+		
+			var grafico = undefined;
+			var dadosGrafico = {
+				labels: ['Formulário 2', 'Requerimento de Ativo', 'Teste Dashboard'],
+				datasets: [{
+					label: 'Tempo Médio de Atendimento',
+					backgroundColor: gerarCorAleatoria(),
+					data: [
+						gerarValorAleatorio(),
+						gerarValorAleatorio(),
+						gerarValorAleatorio()
+					]
+				}]
+			};
+			
+			window.onload = function() {
+				var ctx = document.getElementById('canvas').getContext('2d');
+				grafico = new Chart(ctx, {
+					type: 'bar',
+					data: dadosGrafico,
+					options: {
+						title: {
+							display: true,
+							text: 'Tempo Médio de Atendimento'
+						},
+						tooltips: {
+							mode: 'index',
+							intersect: false
+						},
+						responsive: true,
+						scales: {
+							xAxes: [{
+								stacked: true,
+							}],
+							yAxes: [{
+								stacked: true
+							}]
+						}
+					}
+				});
+			};
+			
+			document.getElementById('randomizeData').addEventListener('click', function() {
+				dadosGrafico.datasets.forEach(function(dataset) {
+					dataset.data = dataset.data.map(function() {
+						return gerarValorAleatorio();
+					});
+				});
+				grafico.update();
+			});
+		</script>
+	</body>
+</html>
